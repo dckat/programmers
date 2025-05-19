@@ -14,7 +14,6 @@ public class BOJ17088 {
         n = Integer.parseInt(st.nextToken());
         b = new int[n];
 
-        // 불의 확산과 지훈이의 위치정보들을 -1로 초기화
         st = new StringTokenizer(br.readLine());
         for(int i = 0; i < n; i++) {
             b[i] = Integer.parseInt(st.nextToken());
