@@ -35,7 +35,29 @@ public class Main {
         }
     }
 
-    private static int[][] rotate(int[] order) {
+    private static void rotate(int[][] copyArr, int r1, int c1, int r2, int c2) {
+        int tmp = copyArr[r1][c1];
+
+        // 좌측열을 위로 한 칸 이동
+        for (int i = r1 + 1; i <= r2; i++) {
+            copyArr[i - 1][c1] = copyArr[i][c1];
+        }
+        // 하단행을 왼쪽으로 한 칸 이동
+        for (int j = c1 + 1; j <= c2; j++) {
+            copyArr[r2][j - 1] = copyArr[r2][j];
+        }
+        // 우측열을 아래로 한 칸 이동
+        for (int i = r2 - 1; i >= r1; i--) {
+            copyArr[i + 1][c2] = copyArr[i][c2];
+        }
+        // 상단 행을 오른쪽으로 한 칸 이동
+        for (int j = c2 - 1; j >= c1; j--) {
+            copyArr[r1][j + 1] = copyArr[r1][j];
+        }
+        copyArr[r1][c1 + 1] = tmp;
+    }
+
+    private static int[][] go(int[] order) {
         int[][] copyArr = new int[n+1][m+1];
 
         for (int i = 1; i <= n; i++) {
@@ -51,41 +73,7 @@ public class Main {
             int S = rot[cur][2];
 
             for (int L = 1; L <= S; L++) {
-                // 테두리 좌표 리스트
-                List<int[]> border = new ArrayList<>();
-
-                // 상단
-                for (int c = C-L; c <= C+L; c++) {
-                    border.add(new int[]{R-L, c});
-                }
-                // 우측
-                for (int r = R-L+1; r <= R+L; r++) {
-                    border.add(new int[]{r, C+L});
-                }
-                // 하단
-                for (int c = C+L-1; c >= C-L; c--) {
-                    border.add(new int[]{R+L, c});
-                }
-                // 좌측
-                for (int r = R+L-1; r > R-L; r--) {
-                    border.add(new int[]{r, C-L});
-                }
-
-                int M = border.size();
-                int[] vals = new int[M];
-
-                // 기존의 테두리 좌표를 가져옴
-                for (int val = 0; val < M; val++) {
-                    int[] p = border.get(val);
-                    vals[val] = copyArr[p[0]][p[1]];
-                }
-
-                // 테두리 좌표를 시계방향으로 한칸씩 이동
-                for (int val = 0; val < M; val++) {
-                    int[] dest = border.get((val+1)%M);
-                    int srcR = dest[0]; int srcC = dest[1];
-                    copyArr[srcR][srcC] = vals[val];
-                }
+                rotate(copyArr, R-L, C-L, R+L, C+L);
             }
         }
         return copyArr;
@@ -114,7 +102,7 @@ public class Main {
         // k개의 순서가 모두 정해진 경우
         if (depth == k) {
             // 회전한 배열의 결과 저장 후 배열의 값 확인
-            int[][] copyArr = rotate(order);
+            int[][] copyArr = go(order);
             int result = calc(copyArr);
 
             // 최솟값 갱신
